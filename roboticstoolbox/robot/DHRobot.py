@@ -617,13 +617,17 @@ class DHRobot(Robot):
         .. warning:: Computed on the first access. If kinematic parameters
               subsequently change this will not be reflected.
         """
+        if self.tool is None:
+            tool_max_dist = 0
+        else:
+            tool_max_dist = max(abs(i) for i in self.tool.t)
         if self._reach is None:
             d = 0
             for link in self:
                 d += abs(link.a) + (link.d)
                 if link.isprismatic and link.qlim is not None:
                     d += link.qlim[1]
-            self._reach = d
+            self._reach = d + tool_max_dist
         return self._reach
 
     @property
